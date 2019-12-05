@@ -442,6 +442,7 @@
 			phandle = <0x1cc>;
 		};
 
+<<<<<<< HEAD
 		disp_rdump_region@5c000000 {
 			reg = <0x00 0x5c000000 0x00 0xf00000>;
 			label = "disp_rdump_region";
@@ -450,6 +451,10 @@
 
 		dfps_data_region@5cf00000 {
 			reg = <0x00 0x5cf00000 0x00 0x100000>;
+=======
+		dfps_data_memory: dfps_data_region@5cf00000 {
+			reg = <0x0 0x5cf00000 0x0 0x0100000>;
+>>>>>>> 9b973edd397a (arm64: dts: vendor: qcom: Remove unused conflicting disp_rdump_memory region)
 			label = "dfps_data_region";
 			phandle = <0x1a4>;
 		};
