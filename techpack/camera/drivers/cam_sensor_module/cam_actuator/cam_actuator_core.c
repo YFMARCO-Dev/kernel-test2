@@ -1,7 +1,6 @@
 // SPDX-License-Identifier: GPL-2.0-only
 /*
  * Copyright (c) 2017-2020, The Linux Foundation. All rights reserved.
- * Copyright (c) 2023 Qualcomm Innovation Center, Inc. All rights reserved.
  */
 
 #include <linux/module.h>
@@ -151,6 +150,41 @@ static int32_t cam_actuator_i2c_modes_util(
 {
 	int32_t rc = 0;
 	uint32_t i, size;
+
+        //-bug535065, Chris.wt, MODIFY, 20200326, modified write add&data for cn3927e vcm driver ic.
+        size = i2c_list->i2c_settings.size;
+        #if 0
+	for (i = 0; i < size; i++) {
+		CAM_INFO(CAM_ACTUATOR,"reg_addr[%d]=0x%x,reg_data[%d]=0x%x,data_mask[%d]=0x%x,addr_type=0x%x,data_type=0x%x,delay[%d]=0x%x",
+		i,i2c_list->i2c_settings.reg_setting[i].reg_addr,
+		i,i2c_list->i2c_settings.reg_setting[i].reg_data,
+		i,i2c_list->i2c_settings.reg_setting[i].data_mask,
+		i2c_list->i2c_settings.addr_type,
+		i2c_list->i2c_settings.data_type,
+		i,i2c_list->i2c_settings.reg_setting[i].delay);
+	}
+        #endif
+
+	for (i = 0; i < size; i++) {
+		if(i2c_list->i2c_settings.reg_setting[i].reg_addr==0xFFFF){
+                            uint16_t i2c_byte1 = ( (i2c_list->i2c_settings.reg_setting[i].reg_data << 4) & 0x3fff ) |0xf;
+			i2c_list->i2c_settings.reg_setting[i].reg_addr=(i2c_byte1&0XFF00)>>8;
+			i2c_list->i2c_settings.reg_setting[i].reg_data=i2c_byte1&0XFF;
+		}
+	}
+
+        #if 0
+	for (i = 0; i < size; i++) {
+		CAM_INFO(CAM_ACTUATOR,"reg_addr[%d]=0x%x,reg_data[%d]=0x%x,data_mask[%d]=0x%x,addr_type=0x%x,data_type=0x%x,delay[%d]=0x%x",
+		i,i2c_list->i2c_settings.reg_setting[i].reg_addr,
+		i,i2c_list->i2c_settings.reg_setting[i].reg_data,
+		i,i2c_list->i2c_settings.reg_setting[i].data_mask,
+		i2c_list->i2c_settings.addr_type,
+		i2c_list->i2c_settings.data_type,
+		i,i2c_list->i2c_settings.reg_setting[i].delay);
+	}
+        #endif
+        //-bug535065, Chris.wt, MODIFY, 20200326, modified write add&data for cn3927e vcm driver ic.
 
 	if (i2c_list->op_code == CAM_SENSOR_I2C_WRITE_RANDOM) {
 		rc = camera_io_dev_write(io_master_info,
@@ -564,7 +598,6 @@ int32_t cam_actuator_i2c_pkt_parse(struct cam_actuator_ctrl_t *a_ctrl,
 				}
 				break;
 			}
-			cam_mem_put_cpu_buf(cmd_desc[i].mem_handle);
 		}
 
 		if (a_ctrl->cam_act_state == CAM_ACTUATOR_ACQUIRE) {
@@ -734,7 +767,6 @@ int32_t cam_actuator_i2c_pkt_parse(struct cam_actuator_ctrl_t *a_ctrl,
 	}
 
 end:
-	cam_mem_put_cpu_buf(config.packet_handle);
 	return rc;
 }
 
@@ -829,11 +861,6 @@ int32_t cam_actuator_driver_cmd(struct cam_actuator_ctrl_t *a_ctrl,
 
 		actuator_acq_dev.device_handle =
 			cam_create_device_hdl(&bridge_params);
-		if (actuator_acq_dev.device_handle <= 0) {
-			rc = -EFAULT;
-			CAM_ERR(CAM_ACTUATOR, "Can not create device handle");
-			goto release_mutex;
-		}
 		a_ctrl->bridge_intf.device_hdl = actuator_acq_dev.device_handle;
 		a_ctrl->bridge_intf.session_hdl =
 			actuator_acq_dev.session_handle;
