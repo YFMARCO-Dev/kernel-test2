@@ -152,7 +152,6 @@ bengal-qrd-overlay.dtbo-base := bengal.dtb
 bengal-idp-overlay.dtbo-base := bengal.dtb
 bengal-idp-usbc-overlay.dtbo-base := bengal.dtb
 bengalp-idp-overlay.dtbo-base := bengalp.dtb
-bengal-idp-2gb-overlay.dtbo-base := bengal-2gb.dtb
 bengal-idp-usbc-1gb-overlay.dtbo-base := bengal-1gb.dtb
 bengal-idp-usbc-2gb-overlay.dtbo-base := bengal-2gb.dtb
 bengal-iot-idp-overlay.dtbo-base := bengal-iot.dtb
