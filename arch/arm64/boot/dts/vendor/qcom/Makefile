@@ -294,8 +294,6 @@ endif
 dtbo-y += bengal-idp-overlay.dtbo
 bengal-idp-overlay.dtbo-base := bengal.dtb
 
-endif # CONFIG_ARCH_BENGAL
-
 always		:= $(dtb-y)
 subdir-y	:= $(dts-dirs)
 clean-files    := *.dtb *.dtbo
